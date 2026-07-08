@@ -32,8 +32,11 @@ const TEMPLATE = /* html */ `
   .inner { padding: 0 1.2rem 1.1rem; }
   .toprow { display: flex; justify-content: space-between; align-items: flex-end;
     margin-top: -2.4rem; }
-  .avatar { width: 76px; height: 76px; border-radius: 50%; object-fit: cover;
-    background: var(--nc-inset, #f4f2ee); border: 3px solid var(--nc-surface, #fff); }
+  .avatar { width: 76px; height: 76px; border-radius: 50%; flex: none;
+    overflow: hidden; display: grid; place-items: center; color: #fff;
+    font-weight: 700; font-size: 1.9rem; user-select: none;
+    border: 3px solid var(--nc-surface, #fff); }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
   .names { margin-top: .7rem; }
   .name { font-weight: 700; font-size: 1.1rem; }
   .nip05 { color: var(--nc-soft, #6d6a76); font-size: .85rem; }
@@ -51,7 +54,7 @@ const TEMPLATE = /* html */ `
   <div class="banner" id="banner"></div>
   <div class="inner">
     <div class="toprow">
-      <img class="avatar" id="avatar" alt="">
+      <span class="avatar" id="avatar"></span>
       <span id="actions"></span>
     </div>
     <div class="names">
@@ -91,7 +94,12 @@ class NostrProfile extends HTMLElement {
     this.$('nip05').textContent = ''
     this.$('about').innerHTML = ''
     this.$('links').innerHTML = ''
-    this.$('avatar').removeAttribute('src')
+    const avatar = this.$('avatar')
+    avatar.innerHTML = ''
+    avatar.textContent = ''
+    const hue = parseInt(pubkey.slice(0, 4), 16) % 360
+    avatar.style.background =
+      `linear-gradient(135deg, hsl(${hue} 62% 60%), hsl(${(hue + 55) % 360} 62% 44%))`
     this.$('banner').style.backgroundImage = ''
 
     // optional enhancements: tip + follow buttons if their modules are on the page
@@ -117,7 +125,13 @@ class NostrProfile extends HTMLElement {
       const display = profile.display_name || profile.name
       if (display) this.$('name').textContent = display
       if (profile.nip05) this.$('nip05').textContent = '✓ ' + profile.nip05.replace(/^_@/, '')
-      if (profile.picture?.startsWith('https://')) this.$('avatar').src = profile.picture
+      if (display && !avatar.querySelector('img')) avatar.textContent = [...display][0].toUpperCase()
+      if (profile.picture?.startsWith('https://')) {
+        const img = document.createElement('img')
+        img.alt = ''
+        img.onload = () => { avatar.textContent = ''; avatar.append(img) }
+        img.src = profile.picture
+      }
       if (profile.banner?.startsWith('https://')) this.$('banner').style.backgroundImage = `url("${profile.banner.replaceAll('"', '').replaceAll('\\', '')}")`
       if (profile.about) renderContentInto(this.$('about'), profile.about, { maxLength: 600 })
       const links = this.$('links')

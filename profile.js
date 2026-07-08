@@ -112,8 +112,8 @@ class NostrProfile extends HTMLElement {
       const display = profile.display_name || profile.name
       if (display) this.$('name').textContent = display
       if (profile.nip05) this.$('nip05').textContent = '✓ ' + profile.nip05.replace(/^_@/, '')
-      if (profile.picture) this.$('avatar').src = profile.picture
-      if (profile.banner) this.$('banner').style.backgroundImage = `url("${profile.banner.replaceAll('"', '').replaceAll('\\', '')}")`
+      if (profile.picture?.startsWith('https://')) this.$('avatar').src = profile.picture
+      if (profile.banner?.startsWith('https://')) this.$('banner').style.backgroundImage = `url("${profile.banner.replaceAll('"', '').replaceAll('\\', '')}")`
       if (profile.about) renderContentInto(this.$('about'), profile.about, { maxLength: 600 })
       const links = this.$('links')
       if (profile.website) {

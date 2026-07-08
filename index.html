@@ -49,6 +49,14 @@ or npub:</p>
     } catch {}
   }
   input.onchange = go
+  // permalink support: /profile/#<hex or npub> (mentions link here)
+  function fromHash() {
+    const raw = location.hash.slice(1)
+    if (!raw) return
+    try { input.value = decode(raw).hex; go() } catch {}
+  }
+  addEventListener('hashchange', fromHash)
+  fromHash()
   go()
 </script>
 </body>

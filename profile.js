@@ -96,6 +96,11 @@ class NostrProfile extends HTMLElement {
 
     // optional enhancements: tip + follow buttons if their modules are on the page
     this.$('actions').innerHTML = ''
+    if (customElements.get('btc-tip-button')) {
+      const itip = document.createElement('btc-tip-button')
+      itip.setAttribute('pubkey', pubkey)
+      this.$('actions').append(itip, ' ')
+    }
     if (customElements.get('nostr-tip')) {
       const tip = document.createElement('nostr-tip')
       tip.setAttribute('pubkey', pubkey)

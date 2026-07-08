@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>profile — nostr profile page demo</title>
+<link rel="stylesheet" href="https://nostr-client.github.io/theme/theme.css">
+<style>
+  body { max-width: 42rem; margin: 2.5rem auto; padding: 0 1.2rem 4rem; }
+  h1 { font-size: 1.4rem; } h1 a { text-decoration: none; }
+  header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  input { font: inherit; width: 100%; padding: .55em .7em; border-radius: 9px; box-sizing: border-box;
+    border: 1px solid var(--nc-line); background: var(--nc-surface); color: inherit;
+    font-family: var(--nc-mono); font-size: .82rem; margin: .8rem 0 1rem; }
+  h2 { font-size: .9rem; color: var(--nc-soft); margin-top: 1.6rem; }
+  nostr-feed { margin-top: .6rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1><a href="https://github.com/nostr-client/profile">nostr-client / profile</a></h1>
+  <nostr-login></nostr-login>
+</header>
+<p class="nc-muted">A whole profile page = a profile card + a feed of that
+author + (because contacts.js is imported) a follow button. Paste any pubkey
+or npub:</p>
+
+<input id="in" value="82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2" spellcheck="false">
+<nostr-profile id="card"></nostr-profile>
+<h2>Notes</h2>
+<nostr-feed id="feed" limit="15"></nostr-feed>
+
+<script type="module">
+  import 'https://nostr-client.github.io/login/login.js'
+  import 'https://nostr-client.github.io/contacts/contacts.js'
+  import './profile.js'
+  import 'https://nostr-client.github.io/feed/feed.js'
+  import { decode } from 'https://nostr-client.github.io/nip19/nip19.js'
+
+  const input = document.getElementById('in')
+  const card = document.getElementById('card')
+  const feed = document.getElementById('feed')
+
+  function go() {
+    try {
+      const { hex } = decode(input.value)
+      card.setAttribute('pubkey', hex)
+      feed.setAttribute('authors', hex)
+    } catch {}
+  }
+  input.onchange = go
+  go()
+</script>
+</body>
+</html>

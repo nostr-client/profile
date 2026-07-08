@@ -94,8 +94,13 @@ class NostrProfile extends HTMLElement {
     this.$('avatar').removeAttribute('src')
     this.$('banner').style.backgroundImage = ''
 
-    // optional enhancement: follow button if contacts.js is on the page
+    // optional enhancements: tip + follow buttons if their modules are on the page
     this.$('actions').innerHTML = ''
+    if (customElements.get('nostr-tip')) {
+      const tip = document.createElement('nostr-tip')
+      tip.setAttribute('pubkey', pubkey)
+      this.$('actions').append(tip, ' ')
+    }
     if (customElements.get('nostr-follow-button')) {
       const btn = document.createElement('nostr-follow-button')
       btn.setAttribute('pubkey', pubkey)
